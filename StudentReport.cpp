@@ -6,6 +6,8 @@
 #include<string>
 
 
+
+
 int main()
 {
 
@@ -15,9 +17,7 @@ int main()
 	return 0;
 }
 
-Student::Student() {}
-
-void Student::InputData()
+void Student::InputData(const Student& student)
 {
 	//Get Student's Name
 	std::cout << "Student's Name: " << "\n";
@@ -43,6 +43,11 @@ void Student::InputData()
 	AverageNote();
 	GradeResult();
 	//system("cls");
+}
+
+void Student::ModifyName(std::string& newName)
+{
+	Name = newName;
 }
 
 void Student::AverageNote()
@@ -100,12 +105,9 @@ int Student::GetRollNumber()
 	return RollNumber;
 }
 
-void Student::ModifyName(const std::string& newName)
-{
-	Name = newName;
-}
 
-void Student::ModifyGrade(int SubjectChoice, int NewGrade)
+
+void Student::ModifyGrade(int SubjectChoice, int& NewGrade)
 {
 	switch (SubjectChoice)
 	{
@@ -128,30 +130,33 @@ void Student::ModifyGrade(int SubjectChoice, int NewGrade)
 	}
 }
 
-char YesorNoQuestion(const std::string& Question)
+char YesOrNoQuestion(const std::string& Question)
 {
+	char userResponse;
 	do
 	{
 		std::cout << Question;
-		std::cin >> gAnswer;
-		gAnswer = std::toupper(gAnswer);
+		std::cin >> userResponse;
+		userResponse = std::toupper(userResponse);
 
-		if (gAnswer != 'Y' && gAnswer != 'N')
+		if (userResponse != 'Y' && userResponse != 'N')
 		{
 			std::cout << "Please input Y/N\n";
 			std::cin.clear();
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		}
 
-	} while (gAnswer != 'Y' && gAnswer != 'N');
+	} while (userResponse != 'Y' && userResponse != 'N');
 
-	return gAnswer;
+	return userResponse;
 }
 
 void Start(std::vector<Student>& studentList)
 {
-
+	int choice;
 	bool Addmore = true;
+	char userResponse = 'N';
+
 		
 	do {
 		std::cout << "1.Add a new student " << "\n2.Search for student" << "\n3.Edit Student" << "\n4.Exit Program";
@@ -166,23 +171,24 @@ void Start(std::vector<Student>& studentList)
 		{
 			do
 			{
-				student.InputData();
+				student.InputData(student);
 				studentList.push_back(student);
 
-				YesorNoQuestion("Add a new student?");
+				userResponse = YesOrNoQuestion("Add a new student?");
 				
 
-			} while (gAnswer == 'Y');
+			} while (userResponse == 'Y');
 		}
 		else if (choice == 2)
 		{
+			
 			do
 			{
-				SearchStudent(studentList);
-				YesorNoQuestion("Search for another student?");
+				student.SearchStudent(studentList);
+				YesOrNoQuestion("Search for another student?");
 
 				// E se eu colocar o Edit Student depois do search para ter opções de modificar o aluno
-			} while (gAnswer == 'Y');
+			} while (userResponse == 'Y');
 		}
 		else if (choice == 3)
 		{
@@ -190,9 +196,9 @@ void Start(std::vector<Student>& studentList)
 			{
 				EditStudent(studentList);
 
-				YesorNoQuestion("Edit another student?");
+				YesOrNoQuestion("Edit another student?");
 
-			} while (gAnswer == 'Y');	
+			} while (userResponse == 'Y');	
 		}
 		else if (choice == 4)
 		{
@@ -209,23 +215,27 @@ void Start(std::vector<Student>& studentList)
 
 void SearchStudent(std::vector<Student>& studentList)
 {
+	int rollNumber;
 	std::cout << "Please enter the student's ID: " << std::endl;
-	std::cin >> SearchID;
+	std::cin >> rollNumber;
 
 	for (auto& s : studentList)
 	{
-		if (SearchID == s.GetRollNumber())
+		if (rollNumber == s.GetRollNumber())
 		{
 			s.PrintData();
 		}
 	}
+	throw std::runtime_error("Student not found.");
 }
 
 
 void EditStudent(std::vector<Student>& studentList)
 {
 	int rollNum;
+	int choice;
 	int Subjectchoice;
+	char userResponse = 'N';
 	bool found = false;
 
 	std::cout << "Please enter the the Roll Number of the student you want to modify " << "\n";
@@ -245,7 +255,8 @@ void EditStudent(std::vector<Student>& studentList)
 			{
 				std::string NewName;
 				std::cout << "\nPlease enter the new name (or type 'exit' to cancel):" << "\n";
-				std::cin >> NewName;
+				std::cin.ignore();
+				std::getline(std::cin, NewName);
 
 				if (NewName == "exit")
 				{
@@ -253,16 +264,16 @@ void EditStudent(std::vector<Student>& studentList)
 					break;
 				}
 
-				std::cout << "Confirm " << NewName <<" ?" << "\n";
-				std::cin >> gAnswer;
-				
-				if (gAnswer == 'Y')
+				std::string ConfirmedName = "Confirm " + NewName + " ?";
+				userResponse = YesOrNoQuestion(ConfirmedName);
+
+				if (userResponse == 'Y')
 				{
 					s.ModifyName(NewName);
 					s.PrintData();
 					break;
-
 				}
+
 			}
 			if (choice == 2)
 			{
