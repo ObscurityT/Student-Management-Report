@@ -10,7 +10,6 @@ class Student {
 public:
 
 	//Constructor
-	Student(std::string Name, int RollNumber, float fGrade) {}
 	Student(); // definir no cpp
 
 	void InputData(const Student& student);

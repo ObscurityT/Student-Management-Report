@@ -7,10 +7,25 @@
 
 
 
+Student::Student()
+{
+	Name = "";
+	Grade[0] ='A';
+	Grade[1] = 'B';
+	Grade[2] = 'C';
+	Grade[3] = 'D';
+	Grade[4] = 'F';
+	int RollNumber = 0;
+	M_PE = 0.0f; 
+	M_Math = 0.0f;
+	M_History = 0.0f;
+	M_Science = 0.0f; 
+	M_English = 0.0f;
+	fGrade = 0.0f;
+}
 
 int main()
 {
-
 	std::vector<Student> StudentList;
 	Start(StudentList);
 
@@ -174,18 +189,18 @@ void Start(std::vector<Student>& studentList)
 				student.InputData(student);
 				studentList.push_back(student);
 
-				userResponse = YesOrNoQuestion("Add a new student?");
+				userResponse = YesOrNoQuestion("Add a new student?\n");
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 				
 
 			} while (userResponse == 'Y');
 		}
 		else if (choice == 2)
 		{
-			
 			do
 			{
 				student.SearchStudent(studentList);
-				YesOrNoQuestion("Search for another student?");
+				userResponse = YesOrNoQuestion("Search for another student?");
 
 				// E se eu colocar o Edit Student depois do search para ter opções de modificar o aluno
 			} while (userResponse == 'Y');
@@ -196,7 +211,7 @@ void Start(std::vector<Student>& studentList)
 			{
 				EditStudent(studentList);
 
-				YesOrNoQuestion("Edit another student?");
+				userResponse = YesOrNoQuestion("Edit another student?");
 
 			} while (userResponse == 'Y');	
 		}
@@ -213,7 +228,7 @@ void Start(std::vector<Student>& studentList)
 }
 
 
-void SearchStudent(std::vector<Student>& studentList)
+void Student::SearchStudent(std::vector<Student>& studentList) //talvez usar um pointer, função de classe corrigir
 {
 	int rollNumber;
 	std::cout << "Please enter the student's ID: " << std::endl;
@@ -225,8 +240,9 @@ void SearchStudent(std::vector<Student>& studentList)
 		{
 			s.PrintData();
 		}
+		
 	}
-	throw std::runtime_error("Student not found.");
+	
 }
 
 
